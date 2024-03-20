@@ -1,0 +1,16 @@
+{
+  "name": "kanbas-node-server-app",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Node.js HTTP Web server for the kanbas application",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node App.js"
+  },
+  "author": "Akhila Ravi",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.0"
+  }
+}
