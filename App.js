@@ -12,15 +12,19 @@ import session from 'express-session';
 import "dotenv/config";
 
 const CONNECTION_STRING = process.env.MONGODB_CONNECTION_STRING || "mongodb://127.0.0.1:27017/kanbas";
+const DB_NAME = process.env.DB_NAME;
+
+mongoose.connect(CONNECTION_STRING, { dbName: DB_NAME });
 
 console.log("Connecting to MongoDB at", CONNECTION_STRING);
-mongoose.connect(CONNECTION_STRING);
+// mongoose.connect(CONNECTION_STRING);
 
 const app = express();
 const allowedOrigins = [
     "https://a6--thriving-klepon-45ada7.netlify.app",
     "http://localhost:3000",
 ];
+
 app.use(cors(
     {
         origin: function (origin, callback) {
