@@ -1,38 +1,46 @@
-import db from "../Database/index.js";
+import * as dao from "./dao.js";
 
-function ModuleRoutes(app) {
-    app.get("/api/courses/:cid/modules", (req, res) => {
-        const { cid } = req.params;
-        const modules = db.modules.filter((m) => m.course === cid);
-        res.send(modules);
-    });
+export default function ModuleRoutes(app) {
+    const deleteModule = async (req, res) => {
+        const status = await dao.deleteModule(req.params.id);
+        res.json(status);
+    };
 
-    app.post("/api/courses/:cid/modules", (req, res) => {
+    const updateModule = async (req, res) => {
+        const { id } = req.params;
+        const status = await dao.updateModule(id, req.body);
+        res.sendStatus(204);
+    };
+
+    const getAllModules = async (req, res) => {
+        const modules = await dao.findAllModules();
+        res.json(modules);
+    };
+
+    const getModuleById = async (req, res) => {
+        const module = await dao.findModuleById(req.params.id);
+        if (!module) {
+            res.status(404).send("Module not found");
+            return;
+        }
+        res.json(module);
+    }
+
+    const createModule = async (req, res) => {
         const { cid } = req.params;
         const newModule = {
             ...req.body,
             course: cid,
             _id: new Date().getTime().toString()
         };
-        db.modules.push(newModule);
-        res.send(newModule);
-    });
+        const module = await dao.createModule(newModule);
+        res.json(module);
+    }
 
-    app.delete("/api/modules/:mid", (req, res) => {
-        const { mid } = req.params;
-        db.modules = db.modules.filter((m) => m._id !== mid);
-        res.sendStatus(200);
-    });
-
-    app.put("/api/modules/:mid", (req, res) => {
-        const { mid } = req.params;
-        const moduleIndex = db.modules.findIndex((m) => m._id === mid);
-        db.modules[moduleIndex] = {
-            ...db.modules[moduleIndex],
-            ...req.body
-        };
-        res.sendStatus(204);
-    });
+    app.get("/api/courses/:cid/modules", getAllModules);
+    app.get("/api/courses/:cid/modules/:id", getModuleById);
+    app.delete("/api/modules/:id", deleteModule);
+    app.put("/api/modules/:id", updateModule);
+    app.post("/api/courses/:cid/modules", createModule);
 }
 
-export default ModuleRoutes;
