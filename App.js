@@ -17,9 +17,20 @@ console.log("Connecting to MongoDB at", CONNECTION_STRING);
 mongoose.connect(CONNECTION_STRING);
 
 const app = express();
+const allowedOrigins = [
+    "https://a6--thriving-klepon-45ada7.netlify.app",
+    "http://localhost:3000",
+];
 app.use(cors(
     {
-        origin: process.env.FRONTEND_URL,
+        origin: function (origin, callback) {
+            // Check if the request origin is in the array of allowed origins
+            if (!origin || allowedOrigins.includes(origin)) {
+                callback(null, true);
+            } else {
+                callback(new Error('Not allowed by CORS'));
+            }
+        },
         credentials: true
     }
 ));
